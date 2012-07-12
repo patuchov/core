@@ -410,7 +410,7 @@ static int SplitProcLine(char *proc, char **names, int *start, int *end, char **
 
         if (strcmp(cols2[i], cols1[i]) != 0)
         {
-            CfOut(cf_inform, "", " !! Unacceptable model uncertainty examining processes");
+//            CfOut(cf_inform, "", " !! Unacceptable model uncertainty examining processes");
         }
 
         line[i] = xstrdup(cols1[i]);

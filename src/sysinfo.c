@@ -44,6 +44,7 @@ static int Linux_Debian_Version(void);
 static int Linux_Mandrake_Version(void);
 static int Linux_Mandriva_Version(void);
 static int Linux_Mandriva_Version_Real(char *filename, char *relstring, char *vendor);
+static int Linux_Qnap(void);
 static int VM_Version(void);
 static int Xen_Domain(void);
 
@@ -827,6 +828,13 @@ void OSClasses(void)
     {
         CfOut(cf_verbose, "", "This appears to be an Arch Linux system.\n");
         SetFlavour("archlinux");
+    }
+
+    if (cfstat("/etc/config/qpkg.conf", &statbuf) != -1 )
+    {
+        CfOut(cf_verbose, "", "This appears to be a QNAP.\n");
+        NewClass("QNAP");
+        Linux_Qnap();
     }
 
     if (cfstat("/proc/vmware/version", &statbuf) != -1 || cfstat("/etc/vmware-release", &statbuf) != -1)
@@ -1864,6 +1872,25 @@ static int Linux_Mandriva_Version_Real(char *filename, char *relstring, char *ve
     }
 
     return 0;
+}
+
+/******************************************************************/
+
+static void Linux_Qnap(void)
+{
+#ifdef QNAPARM09
+    NewScalar("sys", "flavour", "qnap_arm_x09", cf_str);
+    NewScalar("sys", "flavor", "qnap_arm_x09", cf_str);
+#elif QNAPARM19
+    NewScalar("sys", "flavour", "qnap_arm_x19", cf_str);
+    NewScalar("sys", "flavor", "qnap_arm_x19", cf_str);
+#elif QNAPX86
+    NewScalar("sys", "flavour", "qnap_x86", cf_str);
+    NewScalar("sys", "flavor", "qnap_x86", cf_str);
+#elif QNAPX8664
+    NewScalar("sys", "flavour", "qnap_x86_64", cf_str);
+    NewScalar("sys", "flavor", "qnap_x86_64", cf_str);
+#endif
 }
 
 /******************************************************************/
