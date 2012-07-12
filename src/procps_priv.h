@@ -26,6 +26,7 @@
 #define CFENGINE_CFPROCPS_IMPL_H
 
 #include "cf3.defs.h"
+#include "item_lib.h"
 
 /*
  * Only for unit tests

@@ -44,7 +44,7 @@ static int Linux_Debian_Version(void);
 static int Linux_Mandrake_Version(void);
 static int Linux_Mandriva_Version(void);
 static int Linux_Mandriva_Version_Real(char *filename, char *relstring, char *vendor);
-static int Linux_Qnap(void);
+static void Linux_Qnap(void);
 static int VM_Version(void);
 static int Xen_Domain(void);
 
