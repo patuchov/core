@@ -38,7 +38,7 @@ bool KeyNumericParserCallback(const char *field, const char *value, void *param)
     if (sscanf(value, "%llu", &numeric_value) != 1)
     {
         /* Malformed file */
-        return false;
+        return true;
     }
 
     return (*info->orig_callback) (field, numeric_value, info->orig_param);

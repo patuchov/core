@@ -158,6 +158,13 @@ libpromises_la_SOURCES += \
         unix_dir.c
 endif
 
+if LINUX
+if WITH_EXPERIMENTALLINUXPROC
+libpromises_la_SOURCES += \
+        procps.c procps.h
+endif
+endif
+
 BUILT_SOURCES = cf3parse.h
 
 # Automake need to be guided due to symlinking

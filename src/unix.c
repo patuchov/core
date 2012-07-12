@@ -330,6 +330,7 @@ int DoAllSignals(Item *siglist, Attributes a, Promise *pp)
 
 /*******************************************************************/
 
+#ifndef EXPERIMENTALLINUXPROC
 static int ForeignZone(char *s)
 {
 // We want to keep the banner
@@ -367,9 +368,11 @@ static int ForeignZone(char *s)
 # endif
     return false;
 }
+#endif
 
 /*****************************************************************************/
 
+#ifndef EXPERIMENTALLINUXPROC
 static const char *GetProcessOptions(void)
 {
 # ifdef HAVE_GETZONEID
@@ -398,9 +401,18 @@ static const char *GetProcessOptions(void)
 
     return VPSOPTS[VSYSTEMHARDCLASS];
 }
+#endif
 
 int LoadProcessTable(Item **procdata)
 {
+#ifdef EXPERIMENTALLINUXPROC
+    if (!CollectLinuxProcInfo(Item **procdata)
+    {
+        return false;
+    }
+#endif
+
+#ifndef EXPERIMENTALLINUXPROC
     FILE *prp;
     char pscomm[CF_MAXLINKSIZE], vbuff[CF_BUFSIZE], *sp;
     Item *rootprocs = NULL;
@@ -472,7 +484,7 @@ int LoadProcessTable(Item **procdata)
     snprintf(vbuff, CF_MAXVARSIZE, "%s/state/cf_otherprocs", CFWORKDIR);
     RawSaveItemList(otherprocs, vbuff);
     DeleteItemList(otherprocs);
-
+#endif
     return true;
 }
 

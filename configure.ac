@@ -591,6 +591,45 @@ AS_IF([test "x$enable_selinux" = "xyes"], [
 ])
 
 dnl ######################################################################
+dnl Enable usage of built in ps instead of ps command
+dnl ######################################################################
+
+AC_ARG_ENABLE([experimentallinuxproc], [AS_HELP_STRING([--enable-experimentallinuxproc], [Enable experimental ps])])
+AM_CONDITIONAL([WITH_EXPERIMENTALLINUXPROC], [AS_IF([test "x$enable_experimentallinuxproc" = "xyes"], [AC_DEFINE(EXPERIMENTALLINUXPROC, 1, [Define if you want to use internal ps instead of ps command])])])
+
+dnl ######################################################################
+dnl Compile for qnap arm-x09
+dnl ######################################################################
+
+AC_ARG_ENABLE([qnaparm09], [AS_HELP_STRING([--enable-qnaparm09], [Compile for qnap arm-x09])])
+AS_IF([test "x$enable_qnaparm09" = "xyes"], [AC_DEFINE(QNAPARM09, 1, [Define if you want to compile for qnap arm-x09])])
+
+dnl ######################################################################
+dnl Compile for qnap arm-x19
+dnl ######################################################################
+
+AC_ARG_ENABLE([qnaparm19], [AS_HELP_STRING([--enable-qnaparm19], [Compile for qnap arm-x19])])
+AS_IF([test "x$enable_qnaparm19" = "xyes"], [AC_DEFINE(QNAPARM19, 1, [Define if you want to compile for qnap arm-x19])])
+
+dnl ######################################################################
+dnl Compile for qnap x86
+dnl ######################################################################
+
+AC_ARG_ENABLE([qnapx86], [AS_HELP_STRING([--enable-qnapx86], [Compile for qnap x86])])
+AS_IF([test "x$enable_qnapx86" = "xyes"], [AC_DEFINE(QNAPX86, 1, [Define if you want to compile for qnap x86])])
+
+dnl ######################################################################
+dnl Compile for qnap x86_64
+dnl ######################################################################
+
+AC_ARG_ENABLE([qnapx86_64], [AS_HELP_STRING([--enable-qnapx86_64], [Compile for qnap x86_64])])
+AS_IF([test "x$enable_qnapx86_64" = "xyes"], [AC_DEFINE(QNAPX8664, 1, [Define if you want to compile for qnap x86_64])])
+
+dnl ######################################################################
+dnl Collect all the options
+dnl ######################################################################
+
+dnl ######################################################################
 dnl Collect all the options
 dnl ######################################################################
 
