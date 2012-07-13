@@ -406,7 +406,7 @@ static const char *GetProcessOptions(void)
 int LoadProcessTable(Item **procdata)
 {
 #ifdef EXPERIMENTALLINUXPROC
-    if (!CollectLinuxProcInfo(procdata)
+    if (!CollectLinuxProcInfo(procdata))
     {
         return false;
     }
