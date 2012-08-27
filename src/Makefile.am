@@ -13,7 +13,7 @@ LDADD = libpromises.la
 
 projlib_LTLIBRARIES = libpromises.la
 
-libpromises_la_LDFLAGS = -version-info 1:0:0 -no-undefined
+libpromises_la_LDFLAGS = -version-info 1:0:0 -no-undefined -lavahi-client
 libpromises_la_LIBADD = ../pub/libcfpub.la $(NOVA_LDADD)
 
 libpromises_la_CFLAGS = $(AM_CFLAGS)
@@ -154,7 +154,8 @@ libpromises_la_SOURCES = \
         verify_processes.c \
         verify_reports.c \
         writer.c writer.h \
-        xml_writer.c xml_writer.h
+        xml_writer.c xml_writer.h \
+		findhub.c findhub.h findhub_priv.h
 
 if !NT
 libpromises_la_SOURCES += \

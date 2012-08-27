@@ -35,6 +35,7 @@
 #include "conversion.h"
 #include "expand.h"
 #include "transaction.h"
+#include "findhub.h"
 
 #ifdef HAVE_NOVA
 #include "nova-reporting.h"
@@ -112,9 +113,10 @@ static int NoteBundleCompliance(const Bundle *bundle, int save_pr_kept, int save
 static const char *ID = "The main Cfengine agent is the instigator of change\n"
     "in the system. In that sense it is the most important\n" "part of the Cfengine suite.\n";
 
-static const struct option OPTIONS[15] =
+static const struct option OPTIONS[16] =
 {
     {"bootstrap", no_argument, 0, 'B'},
+    {"automatic-bootstrap", no_argument, 0, 'A'},
     {"bundlesequence", required_argument, 0, 'b'},
     {"debug", no_argument, 0, 'd'},
     {"define", required_argument, 0, 'D'},
@@ -131,9 +133,10 @@ static const struct option OPTIONS[15] =
     {NULL, 0, 0, '\0'}
 };
 
-static const char *HINTS[15] =
+static const char *HINTS[16] =
 {
     "Bootstrap/repair a cfengine configuration from failsafe file in the WORKDIR else in current directory",
+    "Find hubs using zeroconf and automatically bootstrap",
     "Set or override bundlesequence from command line",
     "Enable debugging output",
     "Define a list of comma separated classes to be defined at the start of execution",
@@ -197,7 +200,7 @@ static GenericAgentConfig CheckOpts(int argc, char **argv)
 
     POLICY_SERVER[0] = '\0';
 
-    while ((c = getopt_long(argc, argv, "rdvnKIf:D:N:Vs:x:MBb:h", OPTIONS, &optindex)) != EOF)
+    while ((c = getopt_long(argc, argv, "rdvnKIf:D:N:Vs:x:MBAb:h", OPTIONS, &optindex)) != EOF)
     {
         switch ((char) c)
         {
@@ -231,6 +234,87 @@ static GenericAgentConfig CheckOpts(int argc, char **argv)
             NewClass("bootstrap_mode");
             break;
 
+        case 'A':
+            ListHubs();
+            
+            if (hubcount == 1)
+            {
+                OpenNetwork();
+            
+                strncpy(POLICY_SERVER, Hostname2IPString(list->HS->IPAddress), CF_BUFSIZE -1);
+            
+                CloseNetwork();
+            }
+            else
+            {
+                CfOut(cf_error, "", "Found more the one hub on the local network. Beneath you'll find a list of hubs");
+                PrintList();
+                CfOut(cf_error, "", "To which hub you want to bootstrap. Type number from 1-%d:", hubcount);
+                int inpt;
+                
+                scanf("%d",&inpt);
+
+                if ((inpt >= 1) && (inpt <=hubcount))
+                {
+                    int i = 1;
+                
+                    Hosts *tmp = list;
+                
+                    while (tmp != NULL)
+                    {
+                        if (i == inpt)
+                        {
+                            OpenNetwork();
+
+                            strncpy(POLICY_SERVER, Hostname2IPString(tmp->HS->IPAddress), CF_BUFSIZE - 1);
+
+                            CloseNetwork();
+                
+                            break;
+                        }
+                        i++;
+                        tmp = tmp->next;
+                    }
+                }
+                else
+                {
+                    FatalError("Number specified doesn't match the range. Unable to bootstrap.");
+                }
+            }
+            
+            CleanUpList();
+            printf("POLICY SERVER: %s\n", POLICY_SERVER);            
+            BOOTSTRAP = true;
+            MINUSF = true;
+            IGNORELOCK = true;
+            
+            NewClass("bootstrap_mode");
+            
+            for (sp = POLICY_SERVER; *sp != '\0'; sp++)
+            {
+                if (isalpha((int)*sp))
+                {
+                    alpha = true;
+                }
+
+                if (ispunct((int)*sp) && *sp != ':' && *sp != '.')
+                {
+                    alpha = true;
+                }
+    
+                if (*sp == ':')
+                {
+                    v6 = true;
+                }
+            }
+
+            if (alpha && !v6)
+            {
+                FatalError
+                ("Error specifying policy server. The policy server's IP address could not be looked up. Please use the IP address instead if there is no error.");
+            }
+
+            break;
         case 's':
             
             if(IsLoopbackAddress(optarg))
