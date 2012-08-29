@@ -113,10 +113,11 @@ static int NoteBundleCompliance(const Bundle *bundle, int save_pr_kept, int save
 static const char *ID = "The main Cfengine agent is the instigator of change\n"
     "in the system. In that sense it is the most important\n" "part of the Cfengine suite.\n";
 
-static const struct option OPTIONS[16] =
+static const struct option OPTIONS[17] =
 {
     {"bootstrap", no_argument, 0, 'B'},
     {"automatic-bootstrap", no_argument, 0, 'A'},
+	{"pick-first", no_argument, 0, 'P'},
     {"bundlesequence", required_argument, 0, 'b'},
     {"debug", no_argument, 0, 'd'},
     {"define", required_argument, 0, 'D'},
@@ -133,10 +134,11 @@ static const struct option OPTIONS[16] =
     {NULL, 0, 0, '\0'}
 };
 
-static const char *HINTS[16] =
+static const char *HINTS[17] =
 {
     "Bootstrap/repair a cfengine configuration from failsafe file in the WORKDIR else in current directory",
     "Find hubs using zeroconf and automatically bootstrap",
+	"Bootstrap automatically to first hub if more hubs found",
     "Set or override bundlesequence from command line",
     "Enable debugging output",
     "Define a list of comma separated classes to be defined at the start of execution",
@@ -200,7 +202,7 @@ static GenericAgentConfig CheckOpts(int argc, char **argv)
 
     POLICY_SERVER[0] = '\0';
 
-    while ((c = getopt_long(argc, argv, "rdvnKIf:D:N:Vs:x:MBAb:h", OPTIONS, &optindex)) != EOF)
+    while ((c = getopt_long(argc, argv, "rdvnKIf:D:N:Vs:x:MBAPb:h", OPTIONS, &optindex)) != EOF)
     {
         switch ((char) c)
         {
@@ -234,12 +236,49 @@ static GenericAgentConfig CheckOpts(int argc, char **argv)
             NewClass("bootstrap_mode");
             break;
 
+		case 'P':
+		    ListHubs();
+			OpenNetwork();
+			strncpy(POLICY_SERVER, Hostname2IPString(list->HS->IPAddress), CF_BUFSIZE -1);
+			CloseNetwork();
+			CleanUpList();
+	        printf("POLICY SERVER: %s\n", POLICY_SERVER);            
+            BOOTSTRAP = true;
+            MINUSF = true;
+            IGNORELOCK = true;
+	            
+            NewClass("bootstrap_mode");
+            
+            for (sp = POLICY_SERVER; *sp != '\0'; sp++)
+            {
+                if (isalpha((int)*sp))
+                {
+                    alpha = true;
+                }
+
+                if (ispunct((int)*sp) && *sp != ':' && *sp != '.')
+                {
+                    alpha = true;
+                }
+    
+                if (*sp == ':')
+                {
+                    v6 = true;
+                }
+            }
+
+            if (alpha && !v6)
+            {
+                FatalError
+                ("Error specifying policy server. The policy server's IP address could not be looked up. Please use the IP address instead if there is no error.");
+            }
+			break;
         case 'A':
             ListHubs();
 
 			bool bstrap = false;
             
-            if (hubcount == 1)
+            if (hubcount == 1) 
             {
                 OpenNetwork();
             
