@@ -236,6 +236,8 @@ static GenericAgentConfig CheckOpts(int argc, char **argv)
 
         case 'A':
             ListHubs();
+
+			bool bstrap = false;
             
             if (hubcount == 1)
             {
@@ -244,6 +246,8 @@ static GenericAgentConfig CheckOpts(int argc, char **argv)
                 strncpy(POLICY_SERVER, Hostname2IPString(list->HS->IPAddress), CF_BUFSIZE -1);
             
                 CloseNetwork();
+
+				bstrap = true;
             }
             else
             {
@@ -269,7 +273,7 @@ static GenericAgentConfig CheckOpts(int argc, char **argv)
                             strncpy(POLICY_SERVER, Hostname2IPString(tmp->HS->IPAddress), CF_BUFSIZE - 1);
 
                             CloseNetwork();
-                
+							bstrap = true;                
                             break;
                         }
                         i++;
@@ -278,42 +282,47 @@ static GenericAgentConfig CheckOpts(int argc, char **argv)
                 }
                 else
                 {
-                    FatalError("Number specified doesn't match the range. Unable to bootstrap.");
+                    FatalError("Number specified doesn't match hubs on the list. Unable to bootstrap.");
                 }
             }
-            
-            CleanUpList();
-            printf("POLICY SERVER: %s\n", POLICY_SERVER);            
-            BOOTSTRAP = true;
-            MINUSF = true;
-            IGNORELOCK = true;
-            
-            NewClass("bootstrap_mode");
-            
-            for (sp = POLICY_SERVER; *sp != '\0'; sp++)
+            if ((hubcount > 0) && (bstrap))
             {
-                if (isalpha((int)*sp))
-                {
-                    alpha = true;
-                }
+				CleanUpList();
+	            printf("POLICY SERVER: %s\n", POLICY_SERVER);            
+	            BOOTSTRAP = true;
+	            MINUSF = true;
+	            IGNORELOCK = true;
+	            
+	            NewClass("bootstrap_mode");
+	            
+	            for (sp = POLICY_SERVER; *sp != '\0'; sp++)
+	            {
+	                if (isalpha((int)*sp))
+	                {
+	                    alpha = true;
+	                }
 
-                if (ispunct((int)*sp) && *sp != ':' && *sp != '.')
-                {
-                    alpha = true;
-                }
+	                if (ispunct((int)*sp) && *sp != ':' && *sp != '.')
+	                {
+	                    alpha = true;
+	                }
     
-                if (*sp == ':')
-                {
-                    v6 = true;
-                }
-            }
-
-            if (alpha && !v6)
-            {
-                FatalError
-                ("Error specifying policy server. The policy server's IP address could not be looked up. Please use the IP address instead if there is no error.");
-            }
-
+	                if (*sp == ':')
+	                {
+	                    v6 = true;
+	                }
+	            }
+	
+	            if (alpha && !v6)
+	            {
+	                FatalError
+	                ("Error specifying policy server. The policy server's IP address could not be looked up. Please use the IP address instead if there is no error.");
+	            }
+			}
+			else if (hubcount == 0)
+			{
+				FatalError("No hubs found. Unable to bootstrap.");
+			}
             break;
         case 's':
             
