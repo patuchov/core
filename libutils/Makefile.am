@@ -26,6 +26,11 @@ libutils_la_SOURCES = \
 	csv_writer.c csv_writer.h \
 	xml_writer.c xml_writer.h
 
+if WITH_INTERNALPS
+libutils_la_SOURCES += \
+	procps.c procps.h procps_priv.h
+endif
+
 CLEANFILES = *.gcno *.gcda
 
 #

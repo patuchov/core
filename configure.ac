@@ -686,6 +686,13 @@ AS_IF([test "x$enable_selinux" = "xyes"], [
 ])
 
 dnl ######################################################################
+dnl Enable usage of interal ps instead of ps command
+dnl ######################################################################
+
+AC_ARG_ENABLE([internalps], [AS_HELP_STRING([--enable-internalps], [Enable internal ps instead of ps command])])
+AM_CONDITIONAL([WITH_INTERNALPS], [AS_IF([test "x$enable_internalps" = "xyes"], [AC_DEFINE(INTERNALPS, 1, [Define if you want to use internal ps instead of ps command])])])
+
+dnl ######################################################################
 dnl Collect all the options
 dnl ######################################################################
 
