@@ -114,6 +114,11 @@ libpromises_la_SOURCES += \
         unix_dir.c
 endif
 
+if WITH_INTERNALPS
+libpromises_la_SOURCES += \
+	procps.c procps.h procps_priv.h
+endif
+
 BUILT_SOURCES = cf3parse.h
 
 CLEANFILES = *.gcno *.gcda

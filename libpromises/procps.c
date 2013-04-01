@@ -26,6 +26,7 @@
 #include "procps_priv.h"
 #include "proc_keyvalue.h"
 #include <sys/sysinfo.h>
+#include "string_lib.h"
 
 #define PROCSTAT_MAX_SIZE 1024
 

@@ -26,6 +26,7 @@
 #define CFENGINE_PROCESSES_SELECT_H
 
 #include "cf3.defs.h"
+#include "procps.h"
 
 int LoadProcessTable(Item **procdata);
 

@@ -698,6 +698,7 @@ static void GetProcessColumnNames(char *proc, char **names, int *start, int *end
 }
 
 #ifndef __MINGW32__
+#ifndef INTERNALPS
 static const char *GetProcessOptions(void)
 {
 # ifdef HAVE_GETZONEID
@@ -726,6 +727,7 @@ static const char *GetProcessOptions(void)
 
     return VPSOPTS[VSYSTEMHARDCLASS];
 }
+#endif
 #endif
 
 static int ExtractPid(char *psentry, char **names, int *start, int *end)
@@ -774,6 +776,7 @@ static int ExtractPid(char *psentry, char **names, int *start, int *end)
 }
 
 #ifndef __MINGW32__
+#ifndef INTERNALPS
 static int ForeignZone(char *s)
 {
 // We want to keep the banner
@@ -812,10 +815,19 @@ static int ForeignZone(char *s)
     return false;
 }
 #endif
+#endif
 
 #ifndef __MINGW32__
 int LoadProcessTable(Item **procdata)
 {
+#ifdef INTERNALPS
+    if (!CollectLinuxProcInfo(procdata))
+    {
+        return false;
+    }
+#endif
+
+#ifndef INTERNALPS
     FILE *prp;
     char pscomm[CF_MAXLINKSIZE], vbuff[CF_BUFSIZE], *sp;
     Item *rootprocs = NULL;
@@ -897,7 +909,7 @@ int LoadProcessTable(Item **procdata)
     snprintf(vbuff, CF_MAXVARSIZE, "%s/state/cf_otherprocs", CFWORKDIR);
     RawSaveItemList(otherprocs, vbuff);
     DeleteItemList(otherprocs);
-
+#endif
     return true;
 }
 #endif
