@@ -37,6 +37,8 @@
 #include "string_lib.h"
 #include "logic_expressions.h"
 
+#include "logging.h"
+
 // FIX: remove
 #include "syntax.h"
 
@@ -1103,20 +1105,20 @@ gaitem:                IDSYNTAX
 static void ParseErrorVColumnOffset(int column_offset, const char *s, va_list ap)
 {
     char *errmsg = StringVFormat(s, ap);
-    fprintf(stderr, "%s:%d:%d: error: %s\n", P.filename, P.line_no, P.line_pos + column_offset, errmsg);
+    fprintf(stderr, "%s%s:%d:%d: error: %s%s\n", INFO_COLOR, P.filename, P.line_no, P.line_pos + column_offset, errmsg, RESET_COLORS);
     free(errmsg);
 
     /* FIXME: why this might be NULL? */
     if (P.current_line)
     {
-        fprintf(stderr, "%s\n", P.current_line);
-        fprintf(stderr, "%*s\n", P.line_pos + column_offset, "^");
+        fprintf(stderr, "%s%s%s\n", CRITICAL_COLOR, P.current_line, RESET_COLORS);
+        fprintf(stderr, "%s%*s%s\n", CRITICAL_COLOR, P.line_pos + column_offset, "^", RESET_COLORS);
 
         P.error_count++;
 
         if (P.error_count > 12)
         {
-            fprintf(stderr, "Too many errors");
+            fprintf(stderr, "%sToo many errors%s\n", CRITICAL_COLOR, RESET_COLORS);
             exit(1);
         }
     }
@@ -1154,9 +1156,9 @@ static void ParseWarningV(unsigned int warning, const char *s, va_list ap)
     char *errmsg = StringVFormat(s, ap);
     const char *warning_str = ParserWarningToString(warning);
 
-    fprintf(stderr, "%s:%d:%d: warning: %s [-W%s]\n", P.filename, P.line_no, P.line_pos, errmsg, warning_str);
-    fprintf(stderr, "%s\n", P.current_line);
-    fprintf(stderr, "%*s\n", P.line_pos, "^");
+    fprintf(stderr, "%s%s:%d:%d: warning: %s [-W%s]%s\n", WARNING_COLOR, P.filename, P.line_no, P.line_pos, errmsg, warning_str, RESET_COLORS);
+    fprintf(stderr, "%s%s%s\n", WARNING_COLOR, P.current_line, RESET_COLORS);
+    fprintf(stderr, "%s%*s%s\n", WARNING_COLOR, P.line_pos, "^", RESET_COLORS);
 
     free(errmsg);
 
@@ -1169,7 +1171,7 @@ static void ParseWarningV(unsigned int warning, const char *s, va_list ap)
 
     if (P.error_count > 12)
     {
-        fprintf(stderr, "Too many errors");
+        fprintf(stderr, "%sToo many errors%s\n", CRITICAL_COLOR, RESET_COLORS);
         exit(1);
     }
 }
