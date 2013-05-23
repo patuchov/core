@@ -39,6 +39,15 @@ typedef enum
     LOG_LEVEL_DEBUG
 } LogLevel;
 
+#define CRITICAL_COLOR  "\x1b[31;1m"
+#define ERROR_COLOR     "\x1b[33;1m"
+#define WARNING_COLOR   "\x1b[35;1m"
+#define INFO_COLOR      "\x1b[37m"
+#define NOTICE_COLOR    "\x1b[34m"
+#define DEBUG_COLOR     "\x1b[36;1m"
+#define VERBOSE_COLOR   "\x1b[32m"
+#define RESET_COLORS    "\x1b[0m"
+
 const char *LogLevelToString(LogLevel level);
 
 void Log(LogLevel level, const char *fmt, ...) FUNC_ATTR_PRINTF(2, 3);

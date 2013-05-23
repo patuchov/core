@@ -29,6 +29,10 @@
 
 #include <stdarg.h>
 
+#define ANSI_COLOR_RED      "\x1b[31m"
+#define ANSI_BOLD_FONT      "\x1b[1m"
+#define ANSI_RESET          "\x1b[0m"
+
 unsigned long UnsignedModulus(long dividend, long divisor)
 {
     return ((dividend % divisor) + divisor) % divisor;
@@ -39,7 +43,7 @@ void __ProgrammingError(const char *file, int lineno, const char *format, ...)
     va_list ap;
     va_start(ap, format);
     char *fmt = NULL;
-    xasprintf(&fmt, "%s:%d: ProgrammingError: %s\n", file, lineno, format);
+    xasprintf(&fmt, ANSI_BOLD_FONT ANSI_COLOR_RED "%s:%d: ProgrammingError: %s" ANSI_RESET "\n", file, lineno, format);
     fprintf(stdout, fmt, ap);
     free(fmt);
     exit(255);

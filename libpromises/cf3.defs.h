@@ -1685,5 +1685,15 @@ extern const ConstraintSyntax CF_CLASSBODY[];
 extern const ConstraintSyntax CFA_CONTROLBODY[];
 extern const ConstraintSyntax CFEX_CONTROLBODY[];
 
+/*************************************************************************/
+/* colorized output                                                      */
+/*************************************************************************/
+
+/*#define ERROR_COLOR     "\x1b[31m"
+#define WARNING_COLOR   "\x1b[32m"
+#define NORMAL_COLOR    "\x1b[37m"
+#define BOLD_FONT       "\x1b[1m"
+#define RESET_COLORS    "\x1b[0m"
+*/
 #endif
 

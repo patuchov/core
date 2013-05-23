@@ -122,11 +122,11 @@ void LogToStdout(const char *msg, ARG_UNUSED LogLevel level)
     {
         if (level >= LOG_LEVEL_VERBOSE)
         {
-            printf("%s> %s\n", VPREFIX, msg);
+            printf("%s%s> %s%s\n", ERROR_COLOR,VPREFIX, msg, RESET_COLORS);
         }
         else
         {
-            printf("%s\n", msg);
+            printf("%s%s%s\n", VERBOSE_COLOR, msg, RESET_COLORS);
         }
     }
     else
@@ -143,8 +143,32 @@ void LogToStdout(const char *msg, ARG_UNUSED LogLevel level)
         }
 
         const char *string_level = LogLevelToString(level);
-
-        printf("%-24s %8s: %s\n", formatted_timestamp, string_level, msg);
+        switch (level)
+        {
+        case LOG_LEVEL_CRIT:
+            printf("%s%-24s %8s: %s%s\n", CRITICAL_COLOR, formatted_timestamp, string_level, msg, RESET_COLORS);
+            break;
+        case LOG_LEVEL_ERR:
+            printf("%s%-24s %8s: %s%s\n", ERROR_COLOR, formatted_timestamp, string_level, msg, RESET_COLORS);
+            break;
+        case LOG_LEVEL_WARNING:
+            printf("%s%-24s %8s: %s%s\n", WARNING_COLOR, formatted_timestamp, string_level, msg, RESET_COLORS);
+            break;
+        case LOG_LEVEL_NOTICE:
+            printf("%s%-24s %8s: %s%s\n", NOTICE_COLOR, formatted_timestamp, string_level, msg, RESET_COLORS);
+            break;
+        case LOG_LEVEL_INFO:
+            printf("%s%-24s %8s: %s%s\n", INFO_COLOR, formatted_timestamp, string_level, msg, RESET_COLORS);
+            break;
+        case LOG_LEVEL_VERBOSE:
+            printf("%s%-24s %8s: %s%s\n", VERBOSE_COLOR, formatted_timestamp, string_level, msg, RESET_COLORS);
+            break;
+        case LOG_LEVEL_DEBUG:
+            printf("%s%-24s %8s: %s%s\n", DEBUG_COLOR, formatted_timestamp, string_level, msg, RESET_COLORS);
+            break;
+        default:
+            ProgrammingError("Unknown log level passed to LogLevelToString: %d", level);
+        }
     }
 }
 

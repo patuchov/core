@@ -449,7 +449,7 @@ static GenericAgentConfig *CheckOpts(EvalContext *ctx, int argc, char **argv)
             {
                 const char *workdir = GetWorkDir();
                 Writer *out = FileWriter(stdout);
-                WriterWriteF(out, "self-diagnostics for agent using workdir '%s'\n", workdir);
+                WriterWriteF(out,"%sself-diagnostics for agent using workdir '%s' %s\n", VERBOSE_COLOR, workdir, RESET_COLORS);
 
                 AgentDiagnosticsRun(workdir, AgentDiagnosticsAllChecks(), out);
 #ifdef HAVE_NOVA
